@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { preloaderConfig } from "@/content/preloader";
 
@@ -21,16 +20,15 @@ export function PixelMascot({
   const runClass =
     isRunning && !isJumping ? "preloader-chibi-run" : "";
   const jumpClass = isJumping ? "preloader-chibi-jump" : "";
-  const jumpY = isMobile ? -44 : -72;
 
   return (
-    <motion.div
-      className="preloader-chibi-wrap"
-      animate={{ y: isJumping ? jumpY : 0 }}
-      transition={{ duration: isMobile ? 0.36 : 0.42, ease: [0.22, 1, 0.36, 1] }}
-      style={{ scaleX: facingRight ? 1 : -1 }}
+    <div
+      className={`preloader-chibi-wrap ${isMobile ? "preloader-chibi-wrap-mobile" : ""}`}
+      style={{ transform: facingRight ? "scaleX(1)" : "scaleX(-1)" }}
     >
-      <div className={`preloader-chibi ${runClass} ${jumpClass}`}>
+      <div
+        className={`preloader-chibi ${runClass} ${jumpClass} ${isJumping ? "preloader-chibi-jump-motion" : ""}`}
+      >
         {/* Glava */}
         <div className="preloader-chibi-head">
           <span className="preloader-chibi-eye preloader-chibi-eye-l" />
@@ -61,6 +59,6 @@ export function PixelMascot({
         <span className="preloader-chibi-foot preloader-chibi-foot-l" />
         <span className="preloader-chibi-foot preloader-chibi-foot-r" />
       </div>
-    </motion.div>
+    </div>
   );
 }

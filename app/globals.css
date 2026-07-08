@@ -401,7 +401,21 @@ body {
 .gallery-marquee-track {
   display: flex;
   width: max-content;
+  animation: gallery-marquee-left 42s linear infinite;
   will-change: transform;
+}
+
+.gallery-marquee-paused .gallery-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes gallery-marquee-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .menu-category-nav {
@@ -477,6 +491,83 @@ select option {
 
 .preloader-exiting {
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.26s ease-in-out;
+}
+
+.preloader-block-idle {
+  animation: preloader-block-float 1.8s ease-in-out infinite;
+}
+
+.preloader-block-hit-anim {
+  animation: preloader-block-hit-bounce 0.3s ease-out;
+}
+
+@keyframes preloader-block-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes preloader-block-hit-bounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(-10px) scale(0.88);
+  }
+  70% {
+    transform: translateY(3px) scale(1.04);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.preloader-hit-pop-in {
+  animation: preloader-hit-pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes preloader-hit-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.preloader-chibi-jump-motion {
+  animation: preloader-chibi-jump-up 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.preloader-chibi-wrap-mobile .preloader-chibi-jump-motion {
+  animation-name: preloader-chibi-jump-up-mobile;
+  animation-duration: 0.36s;
+}
+
+@keyframes preloader-chibi-jump-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-72px);
+  }
+}
+
+@keyframes preloader-chibi-jump-up-mobile {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-44px);
+  }
 }
 
 @keyframes preloader-shake {
@@ -1353,22 +1444,21 @@ select option {
     width: min(90vw, 320px);
   }
 
-  .preloader-block-hit-card {
-    padding: 10px 14px 12px;
+  .preloader-hit-pop {
     gap: 8px;
   }
 
-  .preloader-block-hit-logo {
+  .preloader-hit-logo {
     width: 64px;
     height: 64px;
   }
 
-  .preloader-block-hit-line1 {
+  .preloader-hit-line1 {
     font-size: clamp(0.62rem, 3.4vw, 0.78rem);
     letter-spacing: 0.1em;
   }
 
-  .preloader-block-hit-line2 {
+  .preloader-hit-line2 {
     font-size: clamp(1rem, 7vw, 1.35rem);
     letter-spacing: 0.14em;
   }
@@ -1416,57 +1506,22 @@ select option {
   flex-shrink: 0;
 }
 
-/* Logo + tekst panel */
-.preloader-block-hit-card {
-  position: relative;
+/* Logo + tekst — bez neon panela */
+.preloader-hit-pop {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 12px 18px 14px;
-  border-radius: 16px;
-  background: rgba(5, 5, 16, 0.98);
-  border: 2px solid rgba(0, 229, 255, 0.65);
-  box-shadow:
-    0 0 32px rgba(0, 229, 255, 0.45),
-    0 0 64px rgba(108, 45, 255, 0.3),
-    inset 0 0 24px rgba(0, 229, 255, 0.08);
 }
 
-.preloader-block-hit-logo-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.preloader-block-hit-logo-ring {
-  position: absolute;
-  inset: -10px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(0, 229, 255, 0.55) 0%,
-    rgba(108, 45, 255, 0.35) 50%,
-    transparent 72%
-  );
-}
-
-.preloader-block-hit-logo {
-  position: relative;
-  z-index: 1;
+.preloader-hit-logo {
   width: 88px;
   height: 88px;
-  border-radius: 50%;
-  border: 3px solid rgba(0, 229, 255, 0.9);
-  box-shadow:
-    0 0 28px rgba(0, 229, 255, 0.9),
-    0 0 56px rgba(108, 45, 255, 0.55);
-  object-fit: cover;
+  object-fit: contain;
 }
 
-.preloader-block-hit-text {
+.preloader-hit-text {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1475,26 +1530,22 @@ select option {
   width: 100%;
 }
 
-.preloader-block-hit-line1 {
+.preloader-hit-line1 {
   display: block;
   font-size: clamp(0.72rem, 3.2vw, 1rem);
   font-weight: 700;
   letter-spacing: 0.16em;
   line-height: 1.25;
   color: #ffffff;
-  text-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
 }
 
-.preloader-block-hit-line2 {
+.preloader-hit-line2 {
   display: block;
   font-size: clamp(1.15rem, 6vw, 1.85rem);
   font-weight: 700;
   letter-spacing: 0.2em;
   line-height: 1.15;
-  color: #00e5ff;
-  text-shadow:
-    0 0 18px rgba(0, 229, 255, 1),
-    0 0 36px rgba(108, 45, 255, 0.5);
+  color: #ffffff;
 }
 
 .preloader-cat-pop {

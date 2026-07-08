@@ -6,57 +6,21 @@ import { galleryImages, galleryShowcaseContent } from "@/content/site";
 import { SectionHeading } from "./ui/SectionHeading";
 
 const MARQUEE_IMAGES = [...galleryImages, ...galleryImages];
-const SCROLL_SPEED = 48;
 
 export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boolean }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const offsetRef = useRef(0);
-  const loopWidthRef = useRef(0);
-  const pausedRef = useRef(false);
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    pausedRef.current = paused;
-  }, [paused]);
+    const node = marqueeRef.current;
+    if (!node) return;
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const measure = () => {
-      loopWidthRef.current = track.scrollWidth / 2;
-    };
-
-    measure();
-
-    const resizeObserver = new ResizeObserver(measure);
-    resizeObserver.observe(track);
-
-    let frame = 0;
-    let last = performance.now();
-
-    const tick = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.05);
-      last = now;
-
-      const loopWidth = loopWidthRef.current;
-      if (!pausedRef.current && loopWidth > 0) {
-        offsetRef.current += SCROLL_SPEED * dt;
-        if (offsetRef.current >= loopWidth) {
-          offsetRef.current %= loopWidth;
-        }
-        track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
-      }
-
-      frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      resizeObserver.disconnect();
-    };
+    const observer = new IntersectionObserver(
+      ([entry]) => setPaused(!entry.isIntersecting),
+      { threshold: 0.05 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -74,16 +38,10 @@ export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boole
         )}
 
         <div
-          className="gallery-marquee -mx-4 md:mx-0"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
-          onTouchEnd={() => setPaused(false)}
+          ref={marqueeRef}
+          className={`gallery-marquee -mx-4 md:mx-0 ${paused ? "gallery-marquee-paused" : ""}`}
         >
-          <div
-            ref={trackRef}
-            className="gallery-marquee-track flex flex-nowrap gap-4 md:gap-5"
-          >
+          <div className="gallery-marquee-track flex flex-nowrap gap-4 md:gap-5">
             {MARQUEE_IMAGES.map((image, index) => (
               <div
                 key={`${image.src}-${index}`}
@@ -96,6 +54,7 @@ export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boole
                     fill
                     sizes="(max-width: 768px) 78vw, 320px"
                     draggable={false}
+                    loading="lazy"
                     className="pointer-events-none object-cover select-none"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050510]/70 via-transparent to-transparent" />

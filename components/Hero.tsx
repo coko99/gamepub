@@ -8,7 +8,6 @@ import { useMounted } from "@/hooks/useMounted";
 import { NeonButton } from "./ui/NeonButton";
 import { HeroStats } from "./HeroStats";
 import { HeroNeonTitle } from "./HeroNeonTitle";
-import { HeroFloatingIcons } from "./HeroFloatingIcons";
 
 export function Hero() {
   const mounted = useMounted();
@@ -63,29 +62,6 @@ export function Hero() {
         <div className="absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-[#00E5FF]/15 blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF2BD6]/10 blur-[80px]" />
       </div>
-
-      {animate &&
-        Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute h-1 w-1 rounded-full bg-[#00E5FF]/40"
-            style={{
-              left: `${(i * 17 + 5) % 100}%`,
-              top: `${(i * 23 + 10) % 100}%`,
-            }}
-            animate={{
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 3 + (i % 3),
-              repeat: Infinity,
-              delay: i * 0.2,
-            }}
-          />
-        ))}
-
-      <HeroFloatingIcons />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">

@@ -1,8 +1,16 @@
 /** Konfiguracija retro gaming preloadera — lako izmenjivo */
 
 export const preloaderConfig = {
+  /** Samo prvo ucitavanje — navigacija ide odmah */
+  showOnNavigation: false,
+
   /** Koliko udaraca u blok pre nego sto se sajt pusti */
   requiredBlockHits: 1,
+
+  firstJumpDelayMs: 320,
+  textDisplayMs: 850,
+  textDisplayMsMobile: 650,
+  exitFadeMs: 260,
 
   brand: {
     gamepubLogo: "/logo-transparent.png",
@@ -11,14 +19,7 @@ export const preloaderConfig = {
     shirtText: "Aj Ti",
     /** Rotirajući tekstovi pri udaru glavom u blok */
     cokoladniShoutouts: [
-      { line1: "SVE NAJBOLJE ZA", line2: "ČOKOLADNOG" },
-      { line1: "NAJBOLJI", line2: "FOTOGRAF" },
-      { line1: "NAJBOLJI", line2: "DIZAJNER" },
-      { line1: "NAJBOLJI", line2: "VIDEOGRAF" },
-      { line1: "NAJBOLJI", line2: "PROGRAMER" },
-      { line1: "NAJBOLJI", line2: "EDITOR" },
-      { line1: "NAJBOLJI", line2: "KREATIVAC" },
-      { line1: "NAJBOLJI", line2: "PRODUCENT" },
+      { line1: "NAJBOLJI FOTOGRAF", line2: "ČOKOLADNI" },
     ],
   },
 

@@ -5,8 +5,9 @@ export const preloaderConfig = {
   showOnNavigation: false,
   sessionKey: "gamepub-preloader-seen",
 
-  minDisplayMs: 900,
+  minDisplayMs: 300,
   exitFadeMs: 250,
+  fillMs: 1400,
 
   gamepubLogo: "/logo-transparent.png",
   cokoladniLogo: "/images/cokoladni-aj-ti-logo.png",

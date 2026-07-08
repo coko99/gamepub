@@ -1,8 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { preloaderConfig } from "@/content/preloader";
+
+function unlockBody() {
+  document.body.style.overflow = "";
+}
 
 function hasSeenPreloader() {
   try {
@@ -12,66 +15,55 @@ function hasSeenPreloader() {
   }
 }
 
-function markPreloaderSeen() {
-  try {
-    sessionStorage.setItem(preloaderConfig.sessionKey, "1");
-  } catch {
-    /* ignore */
-  }
-}
-
 export function GamepubPreloader() {
-  const [active, setActive] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [textIndex, setTextIndex] = useState(0);
-  const progressRef = useRef(0);
-  const finishedRef = useRef(false);
-
-  const finish = useCallback(() => {
-    if (finishedRef.current) return;
-    finishedRef.current = true;
-    markPreloaderSeen();
-    setIsExiting(true);
-    window.setTimeout(() => setActive(false), preloaderConfig.exitFadeMs);
-  }, []);
 
   useEffect(() => {
-    if (hasSeenPreloader()) {
-      setActive(false);
-      return;
-    }
+    unlockBody();
 
-    const prevOverflow = document.body.style.overflow;
+    if (hasSeenPreloader()) return;
+
+    setVisible(true);
     document.body.style.overflow = "hidden";
 
+    let pct = 0;
+    const stepMs = 40;
+    const steps = preloaderConfig.fillMs / stepMs;
+    const increment = 100 / steps;
+
     const progressTimer = window.setInterval(() => {
-      const next = Math.min(100, progressRef.current + 8);
-      progressRef.current = next;
-      setProgress(next);
-    }, 100);
+      pct = Math.min(100, pct + increment);
+      setProgress(Math.round(pct));
+    }, stepMs);
 
     const textTimer = window.setInterval(() => {
       setTextIndex((i) => (i + 1) % preloaderConfig.loadingTexts.length);
     }, preloaderConfig.loadingTextIntervalMs);
 
-    const safetyTimer = window.setTimeout(finish, 4500);
+    const hideTimer = window.setTimeout(() => {
+      setProgress(100);
+      try {
+        sessionStorage.setItem(preloaderConfig.sessionKey, "1");
+      } catch {
+        /* ignore */
+      }
+      setIsExiting(true);
+      unlockBody();
+      window.setTimeout(() => setVisible(false), preloaderConfig.exitFadeMs);
+    }, preloaderConfig.fillMs + preloaderConfig.minDisplayMs);
 
     return () => {
-      document.body.style.overflow = prevOverflow;
       window.clearInterval(progressTimer);
       window.clearInterval(textTimer);
-      window.clearTimeout(safetyTimer);
+      window.clearTimeout(hideTimer);
+      unlockBody();
     };
-  }, [finish]);
+  }, []);
 
-  useEffect(() => {
-    if (!active || progress < 100) return;
-    const exitTimer = window.setTimeout(finish, preloaderConfig.minDisplayMs);
-    return () => window.clearTimeout(exitTimer);
-  }, [active, progress, finish]);
-
-  if (!active) return null;
+  if (!visible) return null;
 
   const loadingText = preloaderConfig.loadingTexts[textIndex];
 
@@ -83,14 +75,12 @@ export function GamepubPreloader() {
       aria-label={`Učitavanje ${progress}%`}
     >
       <div className="preloader-main">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={preloaderConfig.gamepubLogo}
           alt="Gamepub"
-          width={280}
-          height={280}
-          quality={80}
           className="preloader-gamepub-logo"
-          priority
+          draggable={false}
         />
 
         <div className="preloader-progress-wrap">
@@ -110,13 +100,12 @@ export function GamepubPreloader() {
 
       <div className="preloader-powered">
         <div className="preloader-cokoladni-glow" aria-hidden />
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={preloaderConfig.cokoladniLogo}
           alt="Čokoladni Aj Ti"
-          width={72}
-          height={72}
-          quality={75}
           className="preloader-cokoladni-logo"
+          draggable={false}
         />
       </div>
     </div>

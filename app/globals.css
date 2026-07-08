@@ -457,8 +457,14 @@ select option {
   align-items: center;
   justify-content: center;
   background: #030308;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   image-rendering: pixelated;
+}
+
+.preloader-root-mobile {
+  justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 0 max(12px, env(safe-area-inset-bottom));
 }
 
 .preloader-shake {
@@ -601,6 +607,8 @@ select option {
   width: min(92vw, 640px);
   height: min(52vh, 340px);
   margin-bottom: 1.5rem;
+  overflow: visible;
+  flex-shrink: 0;
 }
 
 .preloader-platform {
@@ -1289,40 +1297,204 @@ select option {
 }
 
 @media (max-width: 640px) {
+  .preloader-root-mobile .preloader-scene-simple {
+    height: min(38vh, 220px);
+    transform: none;
+    margin-bottom: 1rem;
+  }
+
+  .preloader-root-mobile .preloader-bg-glow {
+    animation: none;
+    opacity: 0.45;
+  }
+
+  .preloader-root-mobile .preloader-particles {
+    display: none;
+  }
+
+  .preloader-root-mobile .preloader-char-wrap-chibi {
+    transition: none;
+  }
+
+  .preloader-root-mobile .preloader-hud {
+    padding-bottom: 1.25rem;
+  }
+
+  .preloader-root-mobile .preloader-loading-text {
+    font-size: 0.72rem;
+    animation: none;
+  }
+
+  .preloader-root-mobile .preloader-shake {
+    animation-duration: 0.25s;
+  }
+
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-leg-l,
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-leg-r,
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-foot-l,
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-foot-r,
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-arm-l,
+  .preloader-root-mobile .preloader-chibi-run .preloader-chibi-arm-r {
+    animation: none;
+  }
+
   .preloader-scene {
-    height: min(45vh, 280px);
+    height: min(38vh, 220px);
   }
 
-  .preloader-block {
-    width: 36px;
-    height: 36px;
+  .preloader-block-stack {
+    bottom: calc(18% + 52px);
+    gap: 0;
+    max-width: 90vw;
   }
 
-  .preloader-block-lg {
-    width: 44px;
-    height: 44px;
+  .preloader-hit-overlay-mobile {
+    top: max(11vh, 64px);
+    width: min(90vw, 320px);
   }
 
-  .preloader-mascot {
+  .preloader-block-hit-card {
+    padding: 10px 14px 12px;
+    gap: 8px;
+  }
+
+  .preloader-block-hit-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .preloader-block-hit-line1 {
+    font-size: clamp(0.62rem, 3.4vw, 0.78rem);
+    letter-spacing: 0.1em;
+  }
+
+  .preloader-block-hit-line2 {
+    font-size: clamp(1rem, 7vw, 1.35rem);
+    letter-spacing: 0.14em;
+  }
+
+  .preloader-block-main {
     width: 40px;
-    height: 54px;
-  }
-
-  .preloader-mascot-body {
-    transform: scale(0.85);
-    transform-origin: bottom center;
+    height: 40px;
   }
 }
 
 .preloader-scene-simple {
-  height: min(48vh, 300px);
+  height: min(46vh, 280px);
+}
+
+/* Pop — fiksiran na ekranu, ne sece se */
+.preloader-hit-overlay {
+  position: absolute;
+  top: max(14vh, 80px);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  z-index: 40;
+  width: min(92vw, 360px);
+  pointer-events: none;
+}
+
+.preloader-block-stack {
+  position: absolute;
+  bottom: calc(18% + 58px);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
 }
 
 .preloader-block-main {
-  position: absolute;
+  position: relative;
+  left: auto;
+  top: auto;
   width: 52px;
   height: 52px;
-  transform: translateX(-50%);
+  transform: none;
+  flex-shrink: 0;
+}
+
+/* Logo + tekst panel */
+.preloader-block-hit-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 18px 14px;
+  border-radius: 16px;
+  background: rgba(5, 5, 16, 0.98);
+  border: 2px solid rgba(0, 229, 255, 0.65);
+  box-shadow:
+    0 0 32px rgba(0, 229, 255, 0.45),
+    0 0 64px rgba(108, 45, 255, 0.3),
+    inset 0 0 24px rgba(0, 229, 255, 0.08);
+}
+
+.preloader-block-hit-logo-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preloader-block-hit-logo-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 229, 255, 0.55) 0%,
+    rgba(108, 45, 255, 0.35) 50%,
+    transparent 72%
+  );
+}
+
+.preloader-block-hit-logo {
+  position: relative;
+  z-index: 1;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 229, 255, 0.9);
+  box-shadow:
+    0 0 28px rgba(0, 229, 255, 0.9),
+    0 0 56px rgba(108, 45, 255, 0.55);
+  object-fit: cover;
+}
+
+.preloader-block-hit-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  width: 100%;
+}
+
+.preloader-block-hit-line1 {
+  display: block;
+  font-size: clamp(0.72rem, 3.2vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.25;
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
+}
+
+.preloader-block-hit-line2 {
+  display: block;
+  font-size: clamp(1.15rem, 6vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.15;
+  color: #00e5ff;
+  text-shadow:
+    0 0 18px rgba(0, 229, 255, 1),
+    0 0 36px rgba(108, 45, 255, 0.5);
 }
 
 .preloader-cat-pop {
@@ -1364,6 +1536,47 @@ select option {
     0 0 24px rgba(0, 229, 255, 0.85),
     0 0 48px rgba(108, 45, 255, 0.5);
   object-fit: cover;
+}
+
+.preloader-cat-text-pop-hero-wrap {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  pointer-events: none;
+  max-width: min(94vw, 520px);
+  width: max-content;
+}
+
+.preloader-cat-text-pop-hero {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  max-width: none;
+}
+
+.preloader-cat-text-pop-hero .preloader-cat-text-pop-bg {
+  inset: -10px -16px;
+  border-radius: 16px;
+}
+
+.preloader-cat-text-pop-hero .preloader-cat-text-pop-inner {
+  align-items: center;
+  text-align: center;
+  padding: 16px 24px;
+  gap: 6px;
+}
+
+.preloader-cat-text-pop-hero .preloader-cat-text-pop-line1 {
+  font-size: clamp(0.75rem, 3.2vw, 1rem);
+  letter-spacing: 0.22em;
+}
+
+.preloader-cat-text-pop-hero .preloader-cat-text-pop-line2 {
+  font-size: clamp(1.2rem, 6.5vw, 2rem);
+  letter-spacing: 0.32em;
 }
 
 /* Tekst sa strane — odvojeno od loga */
@@ -1698,12 +1911,12 @@ select option {
 
 @media (max-width: 640px) {
   .preloader-chibi-wrap {
-    width: 44px;
-    height: 62px;
+    width: 36px;
+    height: 52px;
   }
 
   .preloader-chibi {
-    transform: scale(0.88);
+    transform: scale(0.72);
     transform-origin: bottom center;
   }
 }
@@ -1764,50 +1977,6 @@ select option {
   }
   50% {
     transform: translateY(-4px) rotate(3deg);
-  }
-}
-
-@media (max-width: 640px) {
-  .preloader-block-main {
-    width: 44px;
-    height: 44px;
-  }
-
-  .preloader-cat-pop-logo {
-    width: 58px;
-    height: 58px;
-  }
-
-  .preloader-cat-text-pop {
-    top: 32%;
-    max-width: 92vw;
-  }
-
-  .preloader-cat-text-pop-right {
-    right: 2%;
-  }
-
-  .preloader-cat-text-pop-left {
-    left: 2%;
-  }
-
-  .preloader-cat-text-pop-inner {
-    padding: 10px 12px;
-  }
-
-  .preloader-runner {
-    width: 52px;
-    height: 52px;
-  }
-
-  .preloader-runner-inner {
-    width: 48px;
-    height: 48px;
-  }
-
-  .preloader-runner-logo {
-    width: 48px;
-    height: 48px;
   }
 }
 

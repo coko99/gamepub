@@ -8,6 +8,7 @@ type PixelMascotProps = {
   isRunning: boolean;
   isJumping: boolean;
   facingRight?: boolean;
+  isMobile?: boolean;
 };
 
 /** Mali pixel čovečuljak — glava, ruke, noge, Gamepub na majici */
@@ -15,16 +16,18 @@ export function PixelMascot({
   isRunning,
   isJumping,
   facingRight = true,
+  isMobile = false,
 }: PixelMascotProps) {
   const runClass =
     isRunning && !isJumping ? "preloader-chibi-run" : "";
   const jumpClass = isJumping ? "preloader-chibi-jump" : "";
+  const jumpY = isMobile ? -44 : -72;
 
   return (
     <motion.div
       className="preloader-chibi-wrap"
-      animate={{ y: isJumping ? -72 : 0 }}
-      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+      animate={{ y: isJumping ? jumpY : 0 }}
+      transition={{ duration: isMobile ? 0.36 : 0.42, ease: [0.22, 1, 0.36, 1] }}
       style={{ scaleX: facingRight ? 1 : -1 }}
     >
       <div className={`preloader-chibi ${runClass} ${jumpClass}`}>

@@ -11,9 +11,16 @@ import {
 import { PixelMascot } from "./PixelMascot";
 
 const BLOCK_X = 45;
-const JUMP_INTERVAL_MS = 2200;
 const FIRST_JUMP_DELAY_MS = 500;
+const TEXT_DISPLAY_MS = 2000;
 const REQUIRED_BLOCK_HITS = preloaderConfig.requiredBlockHits;
+
+type Shoutout = (typeof preloaderConfig.brand.cokoladniShoutouts)[number];
+
+function pickRandomShoutout() {
+  const shoutouts = preloaderConfig.brand.cokoladniShoutouts;
+  return shoutouts[Math.floor(Math.random() * shoutouts.length)];
+}
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(false);
@@ -83,76 +90,58 @@ function Particles({ count }: { count: number }) {
   );
 }
 
-function CokoladniLogoPop({ popKey }: { popKey: number }) {
-  if (popKey === 0) return null;
-
-  return (
-    <motion.div
-      key={`logo-${popKey}`}
-      className="preloader-cat-pop preloader-cat-pop-logo-only"
-      initial={{ opacity: 0, y: 12, scale: 0.35 }}
-      animate={{
-        opacity: [0, 1, 1, 0],
-        y: [12, -28, -58, -88],
-        scale: [0.35, 1.12, 1, 0.88],
-      }}
-      transition={{ duration: 1.1, ease: "easeOut" }}
-    >
-      <div className="preloader-cat-pop-glow" />
-      <Image
-        src={preloaderConfig.brand.cokoladniLogo}
-        alt="Čokoladni Aj Ti"
-        width={72}
-        height={72}
-        className="preloader-cat-pop-logo"
-        priority
-      />
-    </motion.div>
-  );
-}
-
-function CokoladniTextPop({
+function BlockHitPop({
   popKey,
-  fromRight,
+  message,
+  isMobile,
 }: {
   popKey: number;
-  fromRight: boolean;
+  message: Shoutout | null;
+  isMobile: boolean;
 }) {
-  if (popKey === 0) return null;
+  if (popKey === 0 || !message) return null;
 
-  const shoutouts = preloaderConfig.brand.cokoladniShoutouts;
-  const message = shoutouts[(popKey - 1) % shoutouts.length];
-  const xStart = fromRight ? 120 : -120;
+  const logoSize = isMobile ? 64 : 88;
 
   return (
-    <motion.div
-      key={`text-${popKey}`}
-      className={`preloader-cat-text-pop ${fromRight ? "preloader-cat-text-pop-right" : "preloader-cat-text-pop-left"}`}
-      initial={{ opacity: 0, x: xStart, scale: 0.85 }}
-      animate={{
-        opacity: [0, 1, 1, 1, 0],
-        x: [xStart, 0, 0, 0, fromRight ? 24 : -24],
-        scale: [0.85, 1.05, 1, 1, 0.95],
-      }}
-      transition={{ duration: 1.35, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      className={`preloader-hit-overlay ${isMobile ? "preloader-hit-overlay-mobile" : ""}`}
     >
-      <div className="preloader-cat-text-pop-bg" />
-      <div className="preloader-cat-text-pop-inner">
-        <span className="preloader-cat-text-pop-line1 font-gaming">
-          {message.line1}
-        </span>
-        <span className="preloader-cat-text-pop-line2 font-gaming">
-          {message.line2}
-        </span>
-      </div>
-    </motion.div>
+      <motion.div
+        key={`hit-${popKey}`}
+        className="preloader-block-hit-card"
+        initial={{ opacity: 0, y: 16, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: isMobile ? 0.4 : 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <div className="preloader-block-hit-logo-wrap">
+          <div className="preloader-block-hit-logo-ring" />
+          <Image
+            src={preloaderConfig.brand.cokoladniLogo}
+            alt="Čokoladni Aj Ti"
+            width={logoSize}
+            height={logoSize}
+            className="preloader-block-hit-logo"
+            priority
+          />
+        </div>
+        <div className="preloader-block-hit-text">
+          <span className="preloader-block-hit-line1 font-gaming">
+            {message.line1}
+          </span>
+          <span className="preloader-block-hit-line2 font-gaming">
+            {message.line2}
+          </span>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
 export function GamepubPreloader() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  const particleCount = isMobile ? 6 : 14;
+  const particleCount = isMobile ? 0 : 14;
 
   const [active, setActive] = useState(false);
   const [runKey, setRunKey] = useState(0);
@@ -166,11 +155,13 @@ export function GamepubPreloader() {
   const [blockHit, setBlockHit] = useState(false);
   const [logoPopKey, setLogoPopKey] = useState(0);
   const [blockHits, setBlockHits] = useState(0);
+  const [randomShoutout, setRandomShoutout] = useState<Shoutout | null>(null);
   const [isExiting, setIsExiting] = useState(false);
 
   const runDirRef = useRef(1);
   const sessionRef = useRef(0);
   const blockHitsRef = useRef(0);
+  const exitScheduledRef = useRef(false);
   const timersRef = useRef<number[]>([]);
   const previousPathnameRef = useRef<string | null>(null);
   const startedByClickRef = useRef(false);
@@ -202,6 +193,8 @@ export function GamepubPreloader() {
     setLogoPopKey(0);
     setBlockHits(0);
     blockHitsRef.current = 0;
+    exitScheduledRef.current = false;
+    setRandomShoutout(pickRandomShoutout());
     setIsExiting(false);
   }, [clearTimers]);
 
@@ -312,10 +305,13 @@ export function GamepubPreloader() {
   useEffect(() => {
     if (!active || isJumping) return;
 
+    const step = isMobile ? 1.5 : 2.2;
+    const tickMs = isMobile ? 55 : 40;
+
     const interval = window.setInterval(() => {
       if (jumpingRef.current) return;
       setCharX((prev) => {
-        const next = prev + runDirRef.current * 2.2;
+        const next = prev + runDirRef.current * step;
         if (next >= 70) {
           runDirRef.current = -1;
           setFacingRight(false);
@@ -328,12 +324,12 @@ export function GamepubPreloader() {
         }
         return next;
       });
-    }, 40);
+    }, tickMs);
 
     return () => window.clearInterval(interval);
-  }, [active, isJumping]);
+  }, [active, isJumping, isMobile]);
 
-  /* Skok u blok — prvi posle kratke pauze, zatim u petlji */
+  /* Jedan skok u blok */
   useEffect(() => {
     if (!active) return;
 
@@ -343,16 +339,9 @@ export function GamepubPreloader() {
       if (session !== sessionRef.current) return;
       triggerJumpHit();
     }, FIRST_JUMP_DELAY_MS);
-
-    const interval = window.setInterval(() => {
-      if (session !== sessionRef.current) return;
-      triggerJumpHit();
-    }, JUMP_INTERVAL_MS);
-
-    return () => window.clearInterval(interval);
   }, [active, runKey, schedule, triggerJumpHit]);
 
-  /* Progress i izlaz — tek posle 3 udarca u blok */
+  /* Progress i izlaz — posle jednog udarca + kratkog prikaza teksta */
   useEffect(() => {
     if (!active) return;
 
@@ -361,7 +350,7 @@ export function GamepubPreloader() {
     const waitForLoad = mode === "initial";
     const pageLoaded = !waitForLoad || document.readyState === "complete";
 
-    const pct = Math.min(100, (blockHits / REQUIRED_BLOCK_HITS) * 100);
+    const pct = blockHits >= REQUIRED_BLOCK_HITS ? 100 : blockHits * 40;
     setProgress(pct);
     setTextIndex(
       Math.min(texts.length - 1, Math.floor((pct / 100) * texts.length)),
@@ -379,19 +368,25 @@ export function GamepubPreloader() {
       }, 500);
     };
 
+    const scheduleFinish = () => {
+      if (exitScheduledRef.current) return;
+      exitScheduledRef.current = true;
+      schedule(finish, isMobile ? 1500 : TEXT_DISPLAY_MS);
+    };
+
     if (blockHits >= REQUIRED_BLOCK_HITS && pageLoaded) {
-      finish();
+      scheduleFinish();
       return;
     }
 
     if (!waitForLoad) return;
 
     const onLoad = () => {
-      if (blockHitsRef.current >= REQUIRED_BLOCK_HITS) finish();
+      if (blockHitsRef.current >= REQUIRED_BLOCK_HITS) scheduleFinish();
     };
     window.addEventListener("load", onLoad);
     return () => window.removeEventListener("load", onLoad);
-  }, [active, mode, runKey, blockHits, schedule]);
+  }, [active, mode, runKey, blockHits, isMobile, schedule]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 
@@ -402,7 +397,7 @@ export function GamepubPreloader() {
   return (
     <motion.div
       key={runKey}
-      className={`preloader-root ${shake ? "preloader-shake" : ""} ${isExiting ? "preloader-exiting" : ""}`}
+      className={`preloader-root ${isMobile ? "preloader-root-mobile" : ""} ${shake ? "preloader-shake" : ""} ${isExiting ? "preloader-exiting" : ""}`}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.45, ease: "easeInOut" }}
       role="status"
@@ -416,36 +411,44 @@ export function GamepubPreloader() {
         <Particles count={particleCount} />
       </div>
 
+      <BlockHitPop
+        popKey={logoPopKey}
+        message={randomShoutout}
+        isMobile={isMobile}
+      />
+
       <div className="preloader-scene preloader-scene-simple">
         <div className="preloader-platform preloader-platform-main">
           <div className="preloader-platform-edge" />
         </div>
 
-        <motion.div
-          className="preloader-block preloader-block-cyan preloader-block-main"
-          style={{ left: `${BLOCK_X}%`, top: "18%" }}
-          animate={
-            blockHit
-              ? { y: [0, -10, 3, 0], scale: [1, 0.88, 1.04, 1] }
-              : { y: [0, -5, 0] }
-          }
-          transition={
-            blockHit
-              ? { duration: 0.3, ease: "easeOut" }
-              : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }
-          }
+        <div
+          className="preloader-block-stack"
+          style={{ left: `${BLOCK_X}%` }}
         >
-          <div className="preloader-block-inner">
-            <div className="preloader-block-shine" />
-            <div className="preloader-block-core" />
-          </div>
-        </motion.div>
-
-        <CokoladniLogoPop popKey={logoPopKey} />
-        <CokoladniTextPop
-          popKey={logoPopKey}
-          fromRight={logoPopKey % 2 === 1}
-        />
+          <motion.div
+            className="preloader-block preloader-block-cyan preloader-block-main"
+            animate={
+              blockHit
+                ? { y: [0, -10, 3, 0], scale: [1, 0.88, 1.04, 1] }
+                : isMobile
+                  ? { y: 0 }
+                  : { y: [0, -5, 0] }
+            }
+            transition={
+              blockHit
+                ? { duration: 0.3, ease: "easeOut" }
+                : isMobile
+                  ? { duration: 0 }
+                  : { duration: 1.8, repeat: Infinity, ease: "easeInOut" }
+            }
+          >
+            <div className="preloader-block-inner">
+              <div className="preloader-block-shine" />
+              <div className="preloader-block-core" />
+            </div>
+          </motion.div>
+        </div>
 
         <div
           className="preloader-char-wrap preloader-char-wrap-chibi"
@@ -455,6 +458,7 @@ export function GamepubPreloader() {
             isRunning={!isJumping}
             isJumping={isJumping}
             facingRight={facingRight}
+            isMobile={isMobile}
           />
         </div>
       </div>

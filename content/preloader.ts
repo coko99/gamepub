@@ -2,7 +2,7 @@
 
 export const preloaderConfig = {
   /** Koliko udaraca u blok pre nego sto se sajt pusti */
-  requiredBlockHits: 3,
+  requiredBlockHits: 1,
 
   brand: {
     gamepubLogo: "/logo-transparent.png",

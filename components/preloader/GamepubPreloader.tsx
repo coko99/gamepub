@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { preloaderConfig } from "@/content/preloader";
 
 function hasSeenPreloader() {
@@ -21,87 +21,55 @@ function markPreloaderSeen() {
 }
 
 export function GamepubPreloader() {
-  const [active, setActive] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return !hasSeenPreloader();
-  });
+  const [active, setActive] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [pageReady, setPageReady] = useState(
-    () =>
-      typeof document !== "undefined" &&
-      (document.readyState === "interactive" ||
-        document.readyState === "complete"),
-  );
   const [textIndex, setTextIndex] = useState(0);
   const progressRef = useRef(0);
+  const finishedRef = useRef(false);
+
+  const finish = useCallback(() => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    markPreloaderSeen();
+    setIsExiting(true);
+    window.setTimeout(() => setActive(false), preloaderConfig.exitFadeMs);
+  }, []);
 
   useEffect(() => {
-    if (!active) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [active]);
-
-  useEffect(() => {
-    if (!active || pageReady) return;
-
-    const markReady = () => setPageReady(true);
-
-    if (
-      document.readyState === "interactive" ||
-      document.readyState === "complete"
-    ) {
-      markReady();
+    if (hasSeenPreloader()) {
+      setActive(false);
       return;
     }
 
-    document.addEventListener("DOMContentLoaded", markReady, { once: true });
-    return () => document.removeEventListener("DOMContentLoaded", markReady);
-  }, [active, pageReady]);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-  useEffect(() => {
-    if (!active) return;
-
-    const interval = window.setInterval(() => {
-      let next = progressRef.current;
-
-      if (pageReady) {
-        next = Math.min(100, next + 12);
-      } else {
-        next = Math.min(92, next + Math.random() * 5 + 2);
-      }
-
+    const progressTimer = window.setInterval(() => {
+      const next = Math.min(100, progressRef.current + 8);
       progressRef.current = next;
-      setProgress(Math.round(next));
-    }, 120);
+      setProgress(next);
+    }, 100);
 
-    return () => window.clearInterval(interval);
-  }, [active, pageReady]);
-
-  useEffect(() => {
-    if (!active) return;
-
-    const interval = window.setInterval(() => {
+    const textTimer = window.setInterval(() => {
       setTextIndex((i) => (i + 1) % preloaderConfig.loadingTexts.length);
     }, preloaderConfig.loadingTextIntervalMs);
 
-    return () => window.clearInterval(interval);
-  }, [active]);
+    const safetyTimer = window.setTimeout(finish, 4500);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.clearInterval(progressTimer);
+      window.clearInterval(textTimer);
+      window.clearTimeout(safetyTimer);
+    };
+  }, [finish]);
 
   useEffect(() => {
-    if (!active || progress < 100 || !pageReady) return;
-
-    const exitTimer = window.setTimeout(() => {
-      markPreloaderSeen();
-      setIsExiting(true);
-      window.setTimeout(() => setActive(false), preloaderConfig.exitFadeMs);
-    }, preloaderConfig.minDisplayMs);
-
+    if (!active || progress < 100) return;
+    const exitTimer = window.setTimeout(finish, preloaderConfig.minDisplayMs);
     return () => window.clearTimeout(exitTimer);
-  }, [active, progress, pageReady]);
+  }, [active, progress, finish]);
 
   if (!active) return null;
 

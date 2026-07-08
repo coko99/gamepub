@@ -5,7 +5,7 @@ export const preloaderConfig = {
   showOnNavigation: false,
   sessionKey: "gamepub-preloader-seen",
 
-  minDisplayMs: 350,
+  minDisplayMs: 900,
   exitFadeMs: 250,
 
   gamepubLogo: "/logo-transparent.png",

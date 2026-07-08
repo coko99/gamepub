@@ -524,7 +524,8 @@ select option {
   border-radius: 999px;
   background: linear-gradient(90deg, #00e5ff 0%, #6c2dff 100%);
   box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
-  transition: width 0.12s ease-out;
+  transition: width 0.15s linear;
+  will-change: width;
 }
 
 .preloader-progress-pct {

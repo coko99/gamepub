@@ -12,13 +12,15 @@ const inter = Inter({
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700"],
+  preload: false,
 });
 
 const orbitron = Orbitron({
   variable: "--font-orbitron",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["600", "700"],
+  preload: false,
 });
 
 export const metadata: Metadata = {

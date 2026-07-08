@@ -4,73 +4,104 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { preloaderConfig } from "@/content/preloader";
 
+function hasSeenPreloader() {
+  try {
+    return sessionStorage.getItem(preloaderConfig.sessionKey) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markPreloaderSeen() {
+  try {
+    sessionStorage.setItem(preloaderConfig.sessionKey, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
 export function GamepubPreloader() {
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !hasSeenPreloader();
+  });
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [pageLoaded, setPageLoaded] = useState(
-    () => typeof document !== "undefined" && document.readyState === "complete",
+  const [pageReady, setPageReady] = useState(
+    () =>
+      typeof document !== "undefined" &&
+      (document.readyState === "interactive" ||
+        document.readyState === "complete"),
   );
   const [textIndex, setTextIndex] = useState(0);
   const progressRef = useRef(0);
 
   useEffect(() => {
+    if (!active) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prevOverflow;
     };
-  }, []);
+  }, [active]);
 
   useEffect(() => {
-    if (pageLoaded) return;
-    const onLoad = () => setPageLoaded(true);
-    window.addEventListener("load", onLoad, { once: true });
-    return () => window.removeEventListener("load", onLoad);
-  }, [pageLoaded]);
+    if (!active || pageReady) return;
+
+    const markReady = () => setPageReady(true);
+
+    if (
+      document.readyState === "interactive" ||
+      document.readyState === "complete"
+    ) {
+      markReady();
+      return;
+    }
+
+    document.addEventListener("DOMContentLoaded", markReady, { once: true });
+    return () => document.removeEventListener("DOMContentLoaded", markReady);
+  }, [active, pageReady]);
 
   useEffect(() => {
+    if (!active) return;
+
     const interval = window.setInterval(() => {
       let next = progressRef.current;
 
-      if (pageLoaded) {
-        next = Math.min(100, next + 6);
-      } else if (document.readyState === "interactive") {
-        next = Math.min(88, next + Math.random() * 4 + 1);
+      if (pageReady) {
+        next = Math.min(100, next + 12);
       } else {
-        next = Math.min(72, next + Math.random() * 3 + 0.5);
+        next = Math.min(92, next + Math.random() * 5 + 2);
       }
 
       progressRef.current = next;
       setProgress(Math.round(next));
-    }, 80);
+    }, 120);
 
     return () => window.clearInterval(interval);
-  }, [pageLoaded]);
+  }, [active, pageReady]);
 
   useEffect(() => {
+    if (!active) return;
+
     const interval = window.setInterval(() => {
-      setTextIndex(
-        (i) => (i + 1) % preloaderConfig.loadingTexts.length,
-      );
+      setTextIndex((i) => (i + 1) % preloaderConfig.loadingTexts.length);
     }, preloaderConfig.loadingTextIntervalMs);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [active]);
 
   useEffect(() => {
-    if (progress < 100 || !pageLoaded) return;
+    if (!active || progress < 100 || !pageReady) return;
 
     const exitTimer = window.setTimeout(() => {
+      markPreloaderSeen();
       setIsExiting(true);
-      window.setTimeout(
-        () => setActive(false),
-        preloaderConfig.exitFadeMs,
-      );
+      window.setTimeout(() => setActive(false), preloaderConfig.exitFadeMs);
     }, preloaderConfig.minDisplayMs);
 
     return () => window.clearTimeout(exitTimer);
-  }, [progress, pageLoaded]);
+  }, [active, progress, pageReady]);
 
   if (!active) return null;
 
@@ -89,6 +120,7 @@ export function GamepubPreloader() {
           alt="Gamepub"
           width={280}
           height={280}
+          quality={80}
           className="preloader-gamepub-logo"
           priority
         />
@@ -115,8 +147,8 @@ export function GamepubPreloader() {
           alt="Čokoladni Aj Ti"
           width={72}
           height={72}
+          quality={75}
           className="preloader-cokoladni-logo"
-          priority
         />
       </div>
     </div>

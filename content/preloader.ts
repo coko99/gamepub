@@ -1,16 +1,16 @@
 /** Konfiguracija preloadera */
 
 export const preloaderConfig = {
-  /** Samo prvo učitavanje — navigacija ide odmah */
+  /** Samo prvo učitavanje u sesiji — navigacija ide odmah */
   showOnNavigation: false,
+  sessionKey: "gamepub-preloader-seen",
 
-  minDisplayMs: 600,
-  exitFadeMs: 350,
+  minDisplayMs: 350,
+  exitFadeMs: 250,
 
   gamepubLogo: "/logo-transparent.png",
   cokoladniLogo: "/images/cokoladni-aj-ti-logo.png",
 
-  /** Rotirajući tekstovi dok se učitava */
   loadingTexts: [
     "Nameštamo kugle...",
     "Palimo PES...",

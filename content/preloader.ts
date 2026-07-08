@@ -1,46 +1,28 @@
-/** Konfiguracija retro gaming preloadera — lako izmenjivo */
+/** Konfiguracija preloadera */
 
 export const preloaderConfig = {
-  /** Samo prvo ucitavanje — navigacija ide odmah */
+  /** Samo prvo učitavanje — navigacija ide odmah */
   showOnNavigation: false,
 
-  /** Koliko udaraca u blok pre nego sto se sajt pusti */
-  requiredBlockHits: 1,
+  minDisplayMs: 600,
+  exitFadeMs: 350,
 
-  firstJumpDelayMs: 320,
-  textDisplayMs: 850,
-  textDisplayMsMobile: 650,
-  exitFadeMs: 260,
+  gamepubLogo: "/logo-transparent.png",
+  cokoladniLogo: "/images/cokoladni-aj-ti-logo.png",
 
-  brand: {
-    gamepubLogo: "/logo-transparent.png",
-    cokoladniLogo: "/images/cokoladni-aj-ti-logo.png",
-    gamepubText: "GAMEPUB",
-    shirtText: "Aj Ti",
-    /** Rotirajući tekstovi pri udaru glavom u blok */
-    cokoladniShoutouts: [
-      { line1: "NAJBOLJI FOTOGRAF", line2: "ČOKOLADNI" },
-    ],
-  },
-
+  /** Rotirajući tekstovi dok se učitava */
   loadingTexts: [
+    "Nameštamo kugle...",
+    "Palimo PES...",
+    "Igramo Sony...",
+    "Gađamo pikado...",
+    "Bilijar traži centar...",
     "Ubaci novčić...",
-    "Čokoladni Aj Ti pokreće igru...",
-    "Učitava se Gamepub arena...",
-    "Pali se Sony...",
-    "Bilijar se namešta...",
-    "Pikado traži centar...",
     "Još jedna partija...",
     "Ekipa ulazi u igru...",
-    "Gamepub spreman!",
   ],
 
-  navigationTexts: [
-    "Učitava se sledeći level...",
-    "Prelazak u novu zonu...",
-    "Pali se konzole...",
-    "Gamepub spreman!",
-  ],
+  loadingTextIntervalMs: 900,
 } as const;
 
 export type PreloaderMode = "initial" | "navigation";

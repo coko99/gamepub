@@ -13,6 +13,7 @@ import { PixelMascot } from "./PixelMascot";
 const BLOCK_X = 45;
 const JUMP_INTERVAL_MS = 2200;
 const FIRST_JUMP_DELAY_MS = 500;
+const REQUIRED_BLOCK_HITS = preloaderConfig.requiredBlockHits;
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(false);
@@ -41,12 +42,6 @@ function isInternalHref(href: string, origin: string) {
   } catch {
     return href.startsWith("/");
   }
-}
-
-function getDuration(mode: PreloaderMode) {
-  return mode === "initial"
-    ? preloaderConfig.initialDurationMs
-    : preloaderConfig.navigationDurationMs;
 }
 
 function getTexts(mode: PreloaderMode) {
@@ -125,7 +120,8 @@ function CokoladniTextPop({
 }) {
   if (popKey === 0) return null;
 
-  const { powerUpLine1, powerUpLine2 } = preloaderConfig.brand;
+  const shoutouts = preloaderConfig.brand.cokoladniShoutouts;
+  const message = shoutouts[(popKey - 1) % shoutouts.length];
   const xStart = fromRight ? 120 : -120;
 
   return (
@@ -143,10 +139,10 @@ function CokoladniTextPop({
       <div className="preloader-cat-text-pop-bg" />
       <div className="preloader-cat-text-pop-inner">
         <span className="preloader-cat-text-pop-line1 font-gaming">
-          {powerUpLine1}
+          {message.line1}
         </span>
         <span className="preloader-cat-text-pop-line2 font-gaming">
-          {powerUpLine2}
+          {message.line2}
         </span>
       </div>
     </motion.div>
@@ -169,10 +165,12 @@ export function GamepubPreloader() {
   const [isJumping, setIsJumping] = useState(false);
   const [blockHit, setBlockHit] = useState(false);
   const [logoPopKey, setLogoPopKey] = useState(0);
+  const [blockHits, setBlockHits] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
 
   const runDirRef = useRef(1);
   const sessionRef = useRef(0);
+  const blockHitsRef = useRef(0);
   const timersRef = useRef<number[]>([]);
   const previousPathnameRef = useRef<string | null>(null);
   const startedByClickRef = useRef(false);
@@ -202,6 +200,8 @@ export function GamepubPreloader() {
     setIsJumping(false);
     setBlockHit(false);
     setLogoPopKey(0);
+    setBlockHits(0);
+    blockHitsRef.current = 0;
     setIsExiting(false);
   }, [clearTimers]);
 
@@ -216,7 +216,7 @@ export function GamepubPreloader() {
   );
 
   const triggerJumpHit = useCallback(() => {
-    if (jumpingRef.current) return;
+    if (jumpingRef.current || blockHitsRef.current >= REQUIRED_BLOCK_HITS) return;
 
     const session = sessionRef.current;
     jumpingRef.current = true;
@@ -230,6 +230,8 @@ export function GamepubPreloader() {
       if (session !== sessionRef.current) return;
       setBlockHit(true);
       setShake(true);
+      blockHitsRef.current += 1;
+      setBlockHits(blockHitsRef.current);
       setLogoPopKey((key) => key + 1);
       schedule(() => setShake(false), 300);
       schedule(() => setBlockHit(false), 350);
@@ -350,54 +352,46 @@ export function GamepubPreloader() {
     return () => window.clearInterval(interval);
   }, [active, runKey, schedule, triggerJumpHit]);
 
-  /* Progress bar */
+  /* Progress i izlaz — tek posle 3 udarca u blok */
   useEffect(() => {
     if (!active) return;
 
     const session = sessionRef.current;
-    const duration = getDuration(mode);
     const texts = getTexts(mode);
     const waitForLoad = mode === "initial";
-    const start = performance.now();
-    let loaded = !waitForLoad || document.readyState === "complete";
-    let raf = 0;
+    const pageLoaded = !waitForLoad || document.readyState === "complete";
+
+    const pct = Math.min(100, (blockHits / REQUIRED_BLOCK_HITS) * 100);
+    setProgress(pct);
+    setTextIndex(
+      Math.min(texts.length - 1, Math.floor((pct / 100) * texts.length)),
+    );
+
+    const finish = () => {
+      if (session !== sessionRef.current) return;
+      if (blockHitsRef.current < REQUIRED_BLOCK_HITS) return;
+      setProgress(100);
+      setTextIndex(texts.length - 1);
+      setIsExiting(true);
+      schedule(() => {
+        if (session !== sessionRef.current) return;
+        setActive(false);
+      }, 500);
+    };
+
+    if (blockHits >= REQUIRED_BLOCK_HITS && pageLoaded) {
+      finish();
+      return;
+    }
+
+    if (!waitForLoad) return;
 
     const onLoad = () => {
-      loaded = true;
+      if (blockHitsRef.current >= REQUIRED_BLOCK_HITS) finish();
     };
-    if (waitForLoad) window.addEventListener("load", onLoad);
-
-    const tick = (now: number) => {
-      if (session !== sessionRef.current) return;
-
-      const elapsed = now - start;
-      const timePct = Math.min(100, (elapsed / duration) * 100);
-      const pct = loaded || !waitForLoad ? timePct : Math.min(timePct, 92);
-
-      setProgress(pct);
-      setTextIndex(
-        Math.min(texts.length - 1, Math.floor((pct / 100) * texts.length)),
-      );
-
-      if (pct >= 100 && loaded) {
-        setIsExiting(true);
-        schedule(() => {
-          if (session !== sessionRef.current) return;
-          setActive(false);
-        }, 500);
-        return;
-      }
-
-      raf = requestAnimationFrame(tick);
-    };
-
-    raf = requestAnimationFrame(tick);
-
-    return () => {
-      if (waitForLoad) window.removeEventListener("load", onLoad);
-      cancelAnimationFrame(raf);
-    };
-  }, [active, mode, runKey, schedule]);
+    window.addEventListener("load", onLoad);
+    return () => window.removeEventListener("load", onLoad);
+  }, [active, mode, runKey, blockHits, schedule]);
 
   useEffect(() => () => clearTimers(), [clearTimers]);
 

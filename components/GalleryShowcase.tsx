@@ -1,15 +1,63 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useReducedMotion } from "framer-motion";
 import { galleryImages, galleryShowcaseContent } from "@/content/site";
 import { SectionHeading } from "./ui/SectionHeading";
 
 const MARQUEE_IMAGES = [...galleryImages, ...galleryImages];
+const SCROLL_SPEED = 48;
 
 export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boolean }) {
-  const prefersReducedMotion = useReducedMotion();
-  const duration = prefersReducedMotion ? 55 : 38;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopWidthRef = useRef(0);
+  const pausedRef = useRef(false);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const measure = () => {
+      loopWidthRef.current = track.scrollWidth / 2;
+    };
+
+    measure();
+
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(track);
+
+    let frame = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+
+      const loopWidth = loopWidthRef.current;
+      if (!pausedRef.current && loopWidth > 0) {
+        offsetRef.current += SCROLL_SPEED * dt;
+        if (offsetRef.current >= loopWidth) {
+          offsetRef.current %= loopWidth;
+        }
+        track.style.transform = `translate3d(${-offsetRef.current}px, 0, 0)`;
+      }
+
+      frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   return (
     <section className="relative overflow-hidden py-20 md:py-28">
@@ -25,10 +73,16 @@ export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boole
           />
         )}
 
-        <div className="gallery-marquee group -mx-4 md:mx-0">
+        <div
+          className="gallery-marquee -mx-4 md:mx-0"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={() => setPaused(true)}
+          onTouchEnd={() => setPaused(false)}
+        >
           <div
-            className="gallery-marquee-track flex gap-4 md:gap-5"
-            style={{ animationDuration: `${duration}s` }}
+            ref={trackRef}
+            className="gallery-marquee-track flex flex-nowrap gap-4 md:gap-5"
           >
             {MARQUEE_IMAGES.map((image, index) => (
               <div

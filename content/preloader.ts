@@ -1,19 +1,25 @@
 /** Konfiguracija retro gaming preloadera — lako izmenjivo */
 
 export const preloaderConfig = {
-  /** Prvo učitavanje sajta */
-  initialDurationMs: 4200,
-  /** Prelazak između stranica */
-  navigationDurationMs: 2600,
+  /** Koliko udaraca u blok pre nego sto se sajt pusti */
+  requiredBlockHits: 3,
 
   brand: {
     gamepubLogo: "/logo-transparent.png",
     cokoladniLogo: "/images/cokoladni-aj-ti-logo.png",
     gamepubText: "GAMEPUB",
     shirtText: "Aj Ti",
-    /** Tekst koji iskače uz logo pri udaru u blok */
-    powerUpLine1: "NAJBOLJI FOTOGRAF",
-    powerUpLine2: "ČOKOLADNI",
+    /** Rotirajući tekstovi pri udaru glavom u blok */
+    cokoladniShoutouts: [
+      { line1: "SVE NAJBOLJE ZA", line2: "ČOKOLADNOG" },
+      { line1: "NAJBOLJI", line2: "FOTOGRAF" },
+      { line1: "NAJBOLJI", line2: "DIZAJNER" },
+      { line1: "NAJBOLJI", line2: "VIDEOGRAF" },
+      { line1: "NAJBOLJI", line2: "PROGRAMER" },
+      { line1: "NAJBOLJI", line2: "EDITOR" },
+      { line1: "NAJBOLJI", line2: "KREATIVAC" },
+      { line1: "NAJBOLJI", line2: "PRODUCENT" },
+    ],
   },
 
   loadingTexts: [

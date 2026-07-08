@@ -401,21 +401,7 @@ body {
 .gallery-marquee-track {
   display: flex;
   width: max-content;
-  animation: gallery-marquee-left linear infinite;
   will-change: transform;
-}
-
-.gallery-marquee:hover .gallery-marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes gallery-marquee-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
 }
 
 .menu-category-nav {

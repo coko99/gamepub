@@ -9,7 +9,16 @@ const MARQUEE_IMAGES = [...galleryImages, ...galleryImages];
 
 export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boolean }) {
   const marqueeRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const node = marqueeRef.current;
@@ -26,7 +35,7 @@ export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boole
   return (
     <section className="relative overflow-hidden py-20 md:py-28">
       <div className="absolute inset-0 bg-[#080816]" />
-      <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#6C2DFF]/10 blur-[140px]" />
+      <div className="absolute top-1/2 left-1/2 hidden h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#6C2DFF]/10 blur-[140px] md:block" />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         {!compactIntro && (
@@ -39,10 +48,10 @@ export function GalleryShowcase({ compactIntro = false }: { compactIntro?: boole
 
         <div
           ref={marqueeRef}
-          className={`gallery-marquee -mx-4 md:mx-0 ${paused ? "gallery-marquee-paused" : ""}`}
+          className={`gallery-marquee -mx-4 md:mx-0 ${paused ? "gallery-marquee-paused" : ""} ${isMobile ? "gallery-marquee-mobile" : ""}`}
         >
           <div className="gallery-marquee-track flex flex-nowrap gap-4 md:gap-5">
-            {MARQUEE_IMAGES.map((image, index) => (
+            {(isMobile ? galleryImages : MARQUEE_IMAGES).map((image, index) => (
               <div
                 key={`${image.src}-${index}`}
                 className="gallery-marquee-item relative shrink-0"

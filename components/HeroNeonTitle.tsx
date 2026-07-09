@@ -1,5 +1,3 @@
-"use client";
-
 import { heroContent } from "@/content/site";
 
 export function HeroNeonTitle() {

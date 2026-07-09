@@ -58,9 +58,9 @@ export function Hero() {
         />
         <div className="hero-gradient absolute inset-0 opacity-50" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,229,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,229,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        <div className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-[#6C2DFF]/20 blur-[120px]" />
-        <div className="absolute right-1/4 bottom-1/4 h-80 w-80 rounded-full bg-[#00E5FF]/15 blur-[100px]" />
-        <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF2BD6]/10 blur-[80px]" />
+        <div className="absolute top-1/4 left-1/4 hidden h-96 w-96 rounded-full bg-[#6C2DFF]/20 blur-[120px] md:block" />
+        <div className="absolute right-1/4 bottom-1/4 hidden h-80 w-80 rounded-full bg-[#00E5FF]/15 blur-[100px] md:block" />
+        <div className="absolute top-1/2 left-1/2 hidden h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF2BD6]/10 blur-[80px] md:block" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 md:px-6 lg:px-8">

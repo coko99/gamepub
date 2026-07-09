@@ -44,7 +44,7 @@ export function FacilityStats() {
             return (
               <ScrollReveal key={stat.label} delay={i * 0.07}>
                 <div
-                  className="neon-stat-card group relative overflow-hidden rounded-2xl border border-white/10 bg-[#080816]/80 p-5 text-center backdrop-blur-sm md:p-6"
+                  className="neon-stat-card group relative overflow-hidden rounded-2xl border border-white/10 bg-[#080816]/95 p-5 text-center md:bg-[#080816]/80 md:backdrop-blur-sm md:p-6"
                   style={
                     {
                       "--stat-glow": stat.glow,
@@ -87,7 +87,6 @@ export function FacilityStats() {
 
                   <p
                     className={`neon-stat-value font-gaming text-3xl leading-none font-bold md:text-4xl lg:text-[2.75rem] bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}
-                    style={{ filter: mounted ? `drop-shadow(0 0 12px ${stat.glow}88)` : undefined }}
                   >
                     {stat.value}
                     {stat.suffix && (

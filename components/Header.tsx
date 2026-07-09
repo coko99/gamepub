@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +16,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mounted = useMounted();
   const pathname = usePathname();
+  const scrolledRef = useRef(false);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -26,7 +27,14 @@ export function Header() {
   };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      const nextScrolled = window.scrollY > 50;
+      if (nextScrolled !== scrolledRef.current) {
+        scrolledRef.current = nextScrolled;
+        setScrolled(nextScrolled);
+      }
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -40,9 +48,9 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 right-0 left-0 z-50 transition-[background-color,border-color] duration-300 ${
         scrolled
-          ? "border-b border-white/5 bg-[#050510]/80 backdrop-blur-xl"
+          ? "border-b border-white/5 bg-[#050510]/95 md:bg-[#050510]/80 md:backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
@@ -108,7 +116,7 @@ export function Header() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
                   onClick={closeMobileMenu}
-                  className="fixed inset-0 z-[200] bg-[#020208]/85 backdrop-blur-md lg:hidden"
+                  className="fixed inset-0 z-[200] bg-[#020208]/92 lg:hidden md:backdrop-blur-md"
                   aria-label="Zatvori navigaciju"
                 />
 
@@ -119,8 +127,8 @@ export function Header() {
                   transition={{ type: "spring", damping: 30, stiffness: 320 }}
                   className="fixed top-0 right-0 z-[210] flex h-full w-[min(100vw,20rem)] flex-col border-l border-[#00E5FF]/20 bg-[#050510] shadow-[-12px_0_60px_rgba(0,0,0,0.55)] sm:w-[22rem] lg:hidden"
                 >
-                <div className="pointer-events-none absolute top-24 -left-16 h-48 w-48 rounded-full bg-[#6C2DFF]/20 blur-[80px]" />
-                <div className="pointer-events-none absolute bottom-32 right-0 h-40 w-40 rounded-full bg-[#00E5FF]/15 blur-[70px]" />
+                <div className="pointer-events-none absolute top-24 -left-16 hidden h-48 w-48 rounded-full bg-[#6C2DFF]/20 blur-[80px] md:block" />
+                <div className="pointer-events-none absolute bottom-32 right-0 hidden h-40 w-40 rounded-full bg-[#00E5FF]/15 blur-[70px] md:block" />
 
                 <div className="relative flex h-full flex-col overflow-y-auto px-5 pb-10 pt-24">
                   <motion.div

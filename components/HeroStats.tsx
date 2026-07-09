@@ -19,6 +19,8 @@ const heroStats = facilityStats.filter((s) =>
 
 export function HeroStats() {
   const mounted = useMounted();
+  const mobilePillClass =
+    "rounded-full border border-white/10 bg-[#0b0b18] px-3 py-2";
 
   if (!mounted) {
     return (
@@ -44,11 +46,11 @@ export function HeroStats() {
         return (
           <div
             key={stat.label}
-            className="hero-stat-pill group flex items-center gap-2 rounded-full border px-3 py-2 md:px-4 md:py-2.5"
+            className={`hero-stat-pill group flex items-center gap-2 ${mobilePillClass} md:px-4 md:py-2.5`}
             style={
               {
                 borderColor: `${stat.glow}44`,
-                boxShadow: `0 0 20px ${stat.glow}22`,
+                boxShadow: mounted ? `0 0 20px ${stat.glow}22` : "none",
                 animationDelay: `${i * 0.2}s`,
               } as React.CSSProperties
             }

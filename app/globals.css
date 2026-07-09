@@ -136,6 +136,20 @@ body {
     hero-neon-shimmer 6s linear infinite reverse;
 }
 
+@media (max-width: 767px) {
+  .hero-neon-title-glow {
+    display: none;
+  }
+
+  .hero-neon-line,
+  .hero-neon-line--cyan,
+  .hero-neon-line--pink {
+    animation: none !important;
+    filter: none;
+    background-size: 100% auto;
+  }
+}
+
 @keyframes hero-neon-pulse {
   0%,
   100% {
@@ -216,6 +230,25 @@ body {
   background: rgba(8, 8, 22, 0.75);
   backdrop-filter: blur(8px);
   animation: hero-pill-glow 3s ease-in-out infinite;
+}
+
+@media (max-width: 767px) {
+  .glass-card,
+  .hero-stat-pill {
+    backdrop-filter: none;
+  }
+
+  .hero-stat-pill {
+    animation: none;
+    box-shadow: none !important;
+  }
+
+  .neon-icon-ring,
+  .neon-icon-pulse,
+  .neon-icon-glow {
+    animation: none !important;
+    filter: none !important;
+  }
 }
 
 @keyframes neon-ring-breathe {
@@ -418,6 +451,26 @@ body {
   }
 }
 
+@media (max-width: 767px) {
+  .gallery-marquee {
+    overflow-x: auto;
+    overflow-y: hidden;
+    mask-image: none;
+    -webkit-mask-image: none;
+    scrollbar-width: none;
+  }
+
+  .gallery-marquee::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery-marquee-mobile .gallery-marquee-track {
+    animation: none;
+    will-change: auto;
+    padding-inline: 1rem;
+  }
+}
+
 .menu-category-nav {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -602,6 +655,23 @@ select option {
   50% {
     opacity: 1;
     transform: scale(1.08);
+  }
+}
+
+@media (max-width: 767px) {
+  .preloader-gamepub-logo,
+  .preloader-cokoladni-logo {
+    filter: none;
+  }
+
+  .preloader-cokoladni-glow,
+  .preloader-cokoladni-logo {
+    animation: none;
+  }
+
+  .preloader-progress-fill {
+    box-shadow: none;
+    will-change: auto;
   }
 }
 

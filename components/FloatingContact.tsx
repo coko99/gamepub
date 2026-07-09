@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Bot, MessageCircle, Phone, X } from "lucide-react";
 import { floatingContact, getContactLinks } from "@/content/site";
 import { useMounted } from "@/hooks/useMounted";
@@ -132,7 +132,17 @@ interface FloatingContactProps {
 
 export function FloatingContact({ stacked = false, onOpenBot }: FloatingContactProps) {
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const mounted = useMounted();
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   const rootClass = stacked
     ? "relative z-50"
@@ -209,7 +219,7 @@ export function FloatingContact({ stacked = false, onOpenBot }: FloatingContactP
       )}
 
       <div className="relative h-[4.5rem] w-[4.5rem]">
-        {mounted && (
+        {mounted && !isMobile && !prefersReducedMotion && (
           <>
             <OrbitDots
               radius={38}
@@ -251,7 +261,7 @@ export function FloatingContact({ stacked = false, onOpenBot }: FloatingContactP
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className={`relative flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-gradient-to-br from-[#6C2DFF] via-[#2F6BFF] to-[#00E5FF] text-white shadow-[0_0_35px_rgba(0,229,255,0.45)] transition-transform hover:scale-105 ${
+          className={`relative flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full bg-gradient-to-br from-[#6C2DFF] via-[#2F6BFF] to-[#00E5FF] text-white shadow-[0_0_22px_rgba(0,229,255,0.35)] transition-transform hover:scale-105 ${
             open ? "shadow-[0_0_50px_rgba(255,43,214,0.5)]" : ""
           }`}
           aria-label={open ? "Zatvori meni" : floatingContact.mainLabel}

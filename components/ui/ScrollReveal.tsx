@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useMounted } from "@/hooks/useMounted";
 
 interface ScrollRevealProps {
@@ -19,6 +19,15 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const mounted = useMounted();
   const prefersReducedMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   const offsets = {
     up: { y: 40, x: 0 },
@@ -30,7 +39,7 @@ export function ScrollReveal({
 
   const offset = offsets[direction];
 
-  if (!mounted || prefersReducedMotion) {
+  if (!mounted || prefersReducedMotion || isMobile) {
     return <div className={className}>{children}</div>;
   }
 

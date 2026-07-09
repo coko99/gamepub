@@ -2,9 +2,9 @@ export const siteConfig = {
   name: "Gamepub",
   location: "Topličina 13, Kruševac",
   address: "Topličina 13, Kruševac",
-  phone: "065 20 33 546",
-  /** Broj za poziv/Viber/WhatsApp — samo cifre, npr. 381652033546 */
-  phoneDigits: "381652033546",
+  phone: "066 334 488",
+  /** Broj za poziv/Viber/WhatsApp — samo cifre, npr. 381663344488 */
+  phoneDigits: "381663344488",
   instagram: "@gamepub_037",
   instagramUrl: "https://www.instagram.com/gamepub_037/",
   email: "info@gamepub.rs",

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { MapPin, Star } from "lucide-react";
-import { footerContent, siteConfig } from "@/content/site";
+import { MapPin, Phone, Star } from "lucide-react";
+import { footerContent, getContactLinks, siteConfig } from "@/content/site";
 import { AnchorLink } from "./ui/AnchorLink";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -99,9 +99,18 @@ export function Footer() {
                 {footerContent.tagline}
               </p>
 
-              <div className="mt-6 flex items-center gap-2 text-sm text-[#B8B8C8]">
-                <MapPin className="h-4 w-4 shrink-0 text-[#6C2DFF]" />
-                <span>{siteConfig.address}</span>
+              <div className="mt-6 space-y-2 text-sm text-[#B8B8C8]">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 shrink-0 text-[#6C2DFF]" />
+                  <span>{siteConfig.address}</span>
+                </div>
+                <a
+                  href={getContactLinks().tel}
+                  className="flex items-center gap-2 transition-colors hover:text-[#00E5FF]"
+                >
+                  <Phone className="h-4 w-4 shrink-0 text-[#00E5FF]" />
+                  <span>{siteConfig.phone}</span>
+                </a>
               </div>
 
               <div className="mt-8 flex flex-wrap gap-3">

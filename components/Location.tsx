@@ -1,5 +1,5 @@
 import { Star } from "lucide-react";
-import { locationContent, siteConfig } from "@/content/site";
+import { getContactLinks, locationContent, siteConfig } from "@/content/site";
 import { NeonButton } from "./ui/NeonButton";
 import { ScrollReveal } from "./ui/ScrollReveal";
 import { SectionHeading } from "./ui/SectionHeading";
@@ -98,6 +98,18 @@ export function Location() {
                     className="mt-1 inline-block font-semibold text-white transition-colors hover:text-[#00E5FF]"
                   >
                     {siteConfig.address}
+                  </a>
+                </div>
+
+                <div>
+                  <p className="text-xs tracking-wider text-[#B8B8C8]/70 uppercase">
+                    Telefon
+                  </p>
+                  <a
+                    href={getContactLinks().tel}
+                    className="mt-1 inline-block font-semibold text-white transition-colors hover:text-[#00E5FF]"
+                  >
+                    {siteConfig.phone}
                   </a>
                 </div>
 

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { navLinks, siteConfig } from "@/content/site";
+import { getContactLinks, navLinks, siteConfig } from "@/content/site";
 import { useMounted } from "@/hooks/useMounted";
 import { NeonButton } from "./ui/NeonButton";
 import { AnchorLink } from "./ui/AnchorLink";
@@ -192,6 +192,12 @@ export function Header() {
                     >
                       Rezerviši termin
                     </NeonButton>
+                    <a
+                      href={getContactLinks().tel}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#00E5FF]/30 bg-[#00E5FF]/10 py-3 text-sm font-semibold text-[#00E5FF] transition-colors hover:border-[#00E5FF]/50 hover:bg-[#00E5FF]/15"
+                    >
+                      {siteConfig.phone}
+                    </a>
                     <a
                       href={siteConfig.instagramUrl}
                       target="_blank"

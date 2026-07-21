@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { PageIntro } from "@/components/layout/PageIntro";
-import { pageIntros } from "@/content/pages";
 import { MenuPage } from "@/components/menu/MenuPage";
+import { menuCategories } from "@/content/menu";
+import { pageIntros } from "@/content/pages";
+import { fetchPublicMenuCategories } from "@/lib/menuFromDb";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Cenovnik | Gamepub Kruševac",
@@ -16,13 +20,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CenovnikPage() {
+export default async function CenovnikPage() {
   const intro = pageIntros.cenovnik;
+  const dbCategories = await fetchPublicMenuCategories();
+  const categories = dbCategories ?? menuCategories;
 
   return (
     <main>
       <PageIntro tag={intro.tag} title={intro.title} description={intro.description} />
-      <MenuPage embedded />
+      <MenuPage embedded categories={categories} />
     </main>
   );
 }

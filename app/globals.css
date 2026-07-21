@@ -19,6 +19,12 @@
   --font-sans: var(--font-inter);
   --font-heading: var(--font-space-grotesk);
   --font-gaming: var(--font-orbitron);
+  --font-serif: var(--font-space-grotesk);
+  /* Admin / guest meni (port iz Zaks sistema) */
+  --color-gold: #00e5ff;
+  --color-gold-light: #66f0ff;
+  --color-forest-deep: #080816;
+  --color-soft-white: #ffffff;
 }
 
 html {
@@ -722,4 +728,265 @@ select option {
     rgba(108, 45, 255, 0.12) 40%,
     transparent 70%
   );
+}
+
+/* Admin: nova porudžbina alert */
+.new-order-alert {
+  position: fixed;
+  top: 3.75rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 1.5rem;
+  cursor: pointer;
+  background: transparent;
+}
+
+.new-order-alert__flash {
+  position: absolute;
+  inset: 0;
+  background: #c41212;
+  animation: newOrderScreenBlink 0.7s ease-in-out infinite;
+}
+
+.new-order-alert__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.new-order-alert__logo {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  object-fit: contain;
+  box-shadow: 0 0 40px rgba(0, 229, 255, 0.45);
+  animation: newOrderLogoBlink 0.7s ease-in-out infinite;
+}
+
+.new-order-alert__title {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-size: clamp(1.8rem, 7vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  animation: newOrderTextPulse 0.7s ease-in-out infinite;
+}
+
+.new-order-alert__location {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  width: min(100%, 28rem);
+}
+
+.new-order-alert__badge {
+  flex: 1 1 10rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  animation: newOrderBadgePulse 0.7s ease-in-out infinite;
+}
+
+.new-order-alert__badge--sto {
+  background: #111;
+  border: 3px solid #fff;
+}
+
+.new-order-alert__badge-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b01010;
+}
+
+.new-order-alert__badge--sto .new-order-alert__badge-label {
+  color: #ffb4b4;
+}
+
+.new-order-alert__badge-value {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 700;
+  color: #111;
+}
+
+.new-order-alert__badge--sto .new-order-alert__badge-value {
+  color: #fff;
+}
+
+.new-order-alert__badge-value--num {
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  font-weight: 800;
+}
+
+.new-order-alert__hint {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.table-call-alert {
+  position: fixed;
+  top: 3.75rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 1.5rem;
+  cursor: pointer;
+  background: transparent;
+}
+
+.table-call-alert__flash {
+  position: absolute;
+  inset: 0;
+  background: #2f6bff;
+  animation: tableCallBlink 0.75s ease-in-out infinite;
+}
+
+.table-call-alert--bill .table-call-alert__flash {
+  background: #00e5ff;
+  animation-name: tableCallBillBlink;
+}
+
+.table-call-alert__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.table-call-alert__logo {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 9999px;
+  object-fit: contain;
+  animation: newOrderLogoBlink 0.75s ease-in-out infinite;
+}
+
+.table-call-alert__title {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-size: clamp(1.7rem, 6.5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  animation: newOrderTextPulse 0.75s ease-in-out infinite;
+}
+
+.table-call-alert__location {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  width: min(100%, 28rem);
+}
+
+.table-call-alert__badge {
+  flex: 1 1 10rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  animation: newOrderBadgePulse 0.75s ease-in-out infinite;
+}
+
+.table-call-alert__badge--sto {
+  background: #111;
+  border: 3px solid #fff;
+}
+
+.table-call-alert__badge-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2f6bff;
+}
+
+.table-call-alert--bill .table-call-alert__badge-label {
+  color: #0088aa;
+}
+
+.table-call-alert__badge-value {
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 700;
+  color: #111;
+}
+
+.table-call-alert__badge--sto .table-call-alert__badge-value {
+  color: #fff;
+}
+
+.table-call-alert__badge-value--num {
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  font-weight: 800;
+}
+
+.table-call-alert__hint {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes newOrderScreenBlink {
+  0%, 100% { opacity: 0.92; background: #b01010; }
+  50% { opacity: 1; background: #ef2222; }
+}
+
+@keyframes newOrderLogoBlink {
+  0%, 100% { opacity: 0.25; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes newOrderTextPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@keyframes newOrderBadgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes tableCallBlink {
+  0%, 100% { opacity: 0.88; background: #1548d4; }
+  50% { opacity: 1; background: #4d8cff; }
+}
+
+@keyframes tableCallBillBlink {
+  0%, 100% { opacity: 0.88; background: #0099bb; }
+  50% { opacity: 1; background: #00e5ff; }
 }

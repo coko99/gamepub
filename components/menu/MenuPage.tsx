@@ -190,17 +190,23 @@ function SearchResults({
   );
 }
 
-export function MenuPage({ embedded = false }: { embedded?: boolean }) {
+export function MenuPage({
+  embedded = false,
+  categories = menuCategories,
+}: {
+  embedded?: boolean;
+  categories?: MenuCategory[];
+}) {
   const [query, setQuery] = useState("");
-  const [activeId, setActiveId] = useState(menuCategories[0]?.id ?? "");
+  const [activeId, setActiveId] = useState(categories[0]?.id ?? "");
 
   const normalizedQuery = normalizeMenuSearch(query);
   const isSearching = normalizedQuery.length > 0;
 
   const filteredCategories = useMemo(() => {
-    if (!isSearching) return menuCategories;
+    if (!isSearching) return categories;
 
-    return menuCategories
+    return categories
       .map((category) => ({
         ...category,
         items: category.items.filter((item) =>
@@ -208,7 +214,7 @@ export function MenuPage({ embedded = false }: { embedded?: boolean }) {
         ),
       }))
       .filter((category) => category.items.length > 0);
-  }, [query, isSearching]);
+  }, [categories, query, isSearching]);
 
   const flatResults = useMemo(() => {
     if (!isSearching) return [];
@@ -217,6 +223,12 @@ export function MenuPage({ embedded = false }: { embedded?: boolean }) {
       category.items.map((item) => ({ category, item })),
     );
   }, [filteredCategories, isSearching]);
+
+  useEffect(() => {
+    if (categories[0]?.id) {
+      setActiveId(categories[0].id);
+    }
+  }, [categories]);
 
   useEffect(() => {
     if (isSearching || filteredCategories.length === 0) return;
@@ -347,7 +359,7 @@ export function MenuPage({ embedded = false }: { embedded?: boolean }) {
               aria-label="Kategorije menija"
               className="menu-category-nav -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:flex-wrap md:overflow-visible"
             >
-              {menuCategories.map((category) => {
+              {categories.map((category) => {
                 const isActive = activeId === category.id;
 
                 return (

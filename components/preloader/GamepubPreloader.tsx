@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { preloaderConfig } from "@/content/preloader";
 
 function unlockBody() {
@@ -16,6 +17,8 @@ function hasSeenPreloader() {
 }
 
 export function GamepubPreloader() {
+  const pathname = usePathname();
+  const skipPreloader = pathname.startsWith("/admin") || pathname.startsWith("/meni");
   const [visible, setVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -24,7 +27,7 @@ export function GamepubPreloader() {
   useEffect(() => {
     unlockBody();
 
-    if (hasSeenPreloader()) return;
+    if (skipPreloader || hasSeenPreloader()) return;
 
     setVisible(true);
     document.body.style.overflow = "hidden";
@@ -61,7 +64,7 @@ export function GamepubPreloader() {
       window.clearTimeout(hideTimer);
       unlockBody();
     };
-  }, []);
+  }, [skipPreloader]);
 
   if (!visible) return null;
 

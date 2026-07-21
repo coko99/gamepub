@@ -61,7 +61,7 @@ export const navLinks = [
 export const heroContent = {
   title: "Gaming rođendani u Kruševcu",
   subtitle:
-    "99+ Sony igrica, 10+ konzola, 5 stolova bilijara i 2 pikada — sve za rođendan, game night ili druženje koje se pamti.",
+    "99+ Sony igrica, 8 konzola, 5 stolova bilijara i 2 pikada — sve za rođendan, game night ili druženje koje se pamti.",
   ctaPrimary: "Rezerviši termin",
   ctaSecondary: "Pogledaj ponudu",
   floatingCards: ["Game Night", "Birthday Arena"],
@@ -89,7 +89,7 @@ export const facilityStats = [
     gradient: "from-[#00E5FF] to-[#2F6BFF]",
   },
   {
-    value: "10+",
+    value: "8",
     label: "Sony konzola",
     icon: "sony" as const,
     glow: "#2F6BFF",
@@ -145,7 +145,7 @@ export const whyContent = {
     {
       title: "Sony / PlayStation gaming",
       description:
-        "99+ igrica, 10+ Sony konzola i gaming atmosfera za celu ekipu — od prve do poslednje runde.",
+        "99+ igrica, 8 Sony konzola i gaming atmosfera za celu ekipu — od prve do poslednje runde.",
       icon: "gamepad" as const,
     },
     {
@@ -170,7 +170,7 @@ export const birthdaysContent = {
   highlights: [
     "350 m² moderne igraonice",
     "Dobra ventilacija tokom celog termina",
-    "99+ igrica i 10+ Sony konzola",
+    "99+ igrica i 8 Sony konzola",
     "5 stolova bilijara i 2 pikada",
     "Mogućnost iznajmljivanja Sony-a na dan",
   ],
@@ -205,7 +205,7 @@ export const activitiesContent = {
   cards: [
     {
       title: "Sony / PlayStation",
-      stat: "99+ igrica · 10+ Sony",
+      stat: "99+ igrica · 8 Sony",
       description:
         "Ogromna biblioteka igrica, više konzola i gaming atmosfera za celu ekipu — partije, turniri i izazovi.",
       accent: "cyan" as const,
@@ -253,7 +253,7 @@ export const packagesContent = {
         "Kompletan gaming rođendan sa Sony, bilijarom i pikadom — sve na jednom mestu.",
       features: [
         "Rezervisan prostor za ekipu",
-        "99+ igrica · 10+ Sony konzola",
+        "99+ igrica · 8 Sony konzola",
         "5 stolova bilijara · 2 pikada",
         "Idealno za decu i tinejdžere",
       ],
@@ -325,7 +325,7 @@ export const faqItems = [
   {
     question: "Šta sve može da se koristi?",
     answer:
-      "U Gamepub-u su dostupni Sony / PlayStation sa 99+ igrica i 10+ konzola, 5 stolova bilijara i 2 pikada, u zavisnosti od dogovorenog termina i ponude.",
+      "U Gamepub-u su dostupni Sony / PlayStation sa 99+ igrica i 8 konzola, 5 stolova bilijara i 2 pikada, u zavisnosti od dogovorenog termina i ponude.",
   },
   {
     question: "Da li mogu da iznajmim Sony na dan?",
@@ -361,23 +361,14 @@ export const locationContent = {
 export const contactContent = {
   title: "Spremni za sledeći level?",
   description:
-    "Pošalji poruku, proveri slobodne termine i rezerviši Gamepub za rođendan, game night ili privatno druženje.",
-  form: {
-    name: "Ime",
-    phone: "Telefon",
-    eventType: "Tip događaja",
-    date: "Datum",
-    message: "Poruka",
-    submit: "Pošalji upit",
-    eventTypes: ["Rođendan", "Game Night", "Privatna proslava", "Iznajmljivanje Sony-a", "Drugo"],
-  },
+    "Javi nam se na WhatsApp, Viberu ili pozivom — brzo dogovaramo termin za rođendan, game night ili privatno druženje.",
   cards: {
-    phone: "Telefon",
+    whatsapp: "WhatsApp",
+    viber: "Viber",
+    phone: "Poziv",
     instagram: "Instagram",
     location: "Lokacija",
   },
-  ctaMessage: "Pošalji poruku",
-  ctaCall: "Pozovi",
 };
 
 export const footerContent = {

@@ -1,9 +1,5 @@
-"use client";
-
-import { useState, FormEvent } from "react";
-import { Phone, MapPin, Send } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { contactContent, getContactLinks, siteConfig } from "@/content/site";
-import { NeonButton } from "./ui/NeonButton";
 import { ScrollReveal } from "./ui/ScrollReveal";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -25,13 +21,109 @@ function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
-export function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
+function ViberIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M11.398.002C9.473.028 5.331.344 3.014 2.467 1.294 4.177.693 6.698.623 9.71c-.07 3.011-.138 8.625 5.403 10.149v2.016s-.037.905.564.605c.602-.301 3.23-1.934 4.438-2.956.986.146 2.044.222 3.125.228 3.718.018 6.449-.956 8.015-3.228 1.665-2.424 1.531-5.648 1.494-6.628-.037-.98-.193-3.316-1.329-5.043-1.424-2.144-3.868-3.088-6.282-3.377-.553-.066-1.093-.1-1.582-.114zm.057 1.807c.048 0 .098 0 .148.002 2.246.135 4.262.966 5.392 2.668 1.003 1.512 1.127 3.567 1.161 4.458.034.891.148 3.787-1.256 5.831-1.307 1.905-3.604 2.715-6.978 2.7-.881-.004-1.855-.074-2.825-.22-.605-.096-1.22.148-1.656.464-.413.298-2.009 1.364-2.509 1.707-.094.063-.201.094-.301.094-.248 0-.416-.248-.416-.248l-.003-3.483c-4.753-1.303-4.548-6.218-4.488-8.925.059-2.707.578-4.876 2.015-6.315C4.898 1.444 8.488 1.182 11.455 1.81z" />
+    </svg>
+  );
+}
+
+type ContactCardProps = {
+  href: string;
+  label: string;
+  value: string;
+  external?: boolean;
+  icon: React.ReactNode;
+  hoverBorder: string;
+  iconBg: string;
+};
+
+function ContactCard({
+  href,
+  label,
+  value,
+  external,
+  icon,
+  hoverBorder,
+  iconBg,
+}: ContactCardProps) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className={`glass-card group flex items-center gap-4 rounded-xl p-5 transition-all duration-300 ${hoverBorder}`}
+    >
+      <div
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${iconBg}`}
+      >
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs text-[#B8B8C8]">{label}</p>
+        <p className="truncate font-semibold text-white">{value}</p>
+      </div>
+    </a>
+  );
+}
+
+export function Contact() {
+  const links = getContactLinks();
+
+  const cards: ContactCardProps[] = [
+    {
+      href: links.whatsapp,
+      label: contactContent.cards.whatsapp,
+      value: siteConfig.phone,
+      external: true,
+      icon: <WhatsAppIcon className="h-5 w-5 text-[#25D366]" />,
+      hoverBorder: "hover:border-[#25D366]/40",
+      iconBg: "bg-[#25D366]/10",
+    },
+    {
+      href: links.viber,
+      label: contactContent.cards.viber,
+      value: siteConfig.phone,
+      icon: <ViberIcon className="h-5 w-5 text-[#7360F2]" />,
+      hoverBorder: "hover:border-[#7360F2]/40",
+      iconBg: "bg-[#7360F2]/10",
+    },
+    {
+      href: links.tel,
+      label: contactContent.cards.phone,
+      value: siteConfig.phone,
+      icon: <Phone className="h-5 w-5 text-[#00E5FF]" />,
+      hoverBorder: "hover:border-[#00E5FF]/40",
+      iconBg: "bg-[#00E5FF]/10",
+    },
+    {
+      href: siteConfig.instagramUrl,
+      label: contactContent.cards.instagram,
+      value: siteConfig.instagram,
+      external: true,
+      icon: <InstagramIcon className="h-5 w-5 text-[#FF2BD6]" />,
+      hoverBorder: "hover:border-[#FF2BD6]/40",
+      iconBg: "bg-[#FF2BD6]/10",
+    },
+    {
+      href: siteConfig.mapLink,
+      label: contactContent.cards.location,
+      value: siteConfig.location,
+      external: true,
+      icon: <MapPin className="h-5 w-5 text-[#6C2DFF]" />,
+      hoverBorder: "hover:border-[#6C2DFF]/40",
+      iconBg: "bg-[#6C2DFF]/10",
+    },
+  ];
 
   return (
     <section id="kontakt" className="relative overflow-hidden py-24 md:py-32">
@@ -51,171 +143,11 @@ export function Contact() {
           </p>
         </ScrollReveal>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-5 lg:gap-12">
-          <ScrollReveal direction="left" className="space-y-4 lg:col-span-2">
-            <a
-              href={getContactLinks().tel}
-              className="glass-card group flex items-center gap-4 rounded-xl p-5 transition-all duration-300 hover:border-[#00E5FF]/40"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#00E5FF]/10">
-                <Phone className="h-5 w-5 text-[#00E5FF]" />
-              </div>
-              <div>
-                <p className="text-xs text-[#B8B8C8]">{contactContent.cards.phone}</p>
-                <p className="font-semibold text-white">{siteConfig.phone}</p>
-              </div>
-            </a>
-
-            <a
-              href={siteConfig.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card group flex items-center gap-4 rounded-xl p-5 transition-all duration-300 hover:border-[#FF2BD6]/40"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#FF2BD6]/10">
-                <InstagramIcon className="h-5 w-5 text-[#FF2BD6]" />
-              </div>
-              <div>
-                <p className="text-xs text-[#B8B8C8]">{contactContent.cards.instagram}</p>
-                <p className="font-semibold text-white">{siteConfig.instagram}</p>
-              </div>
-            </a>
-
-            <a
-              href={siteConfig.mapLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card group flex items-center gap-4 rounded-xl p-5 transition-all duration-300 hover:border-[#6C2DFF]/40"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#6C2DFF]/10">
-                <MapPin className="h-5 w-5 text-[#6C2DFF]" />
-              </div>
-              <div>
-                <p className="text-xs text-[#B8B8C8]">{contactContent.cards.location}</p>
-                <p className="font-semibold text-white">{siteConfig.location}</p>
-              </div>
-            </a>
-
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row lg:flex-col">
-              <NeonButton href="#kontakt-form" className="w-full">
-                {contactContent.ctaMessage}
-              </NeonButton>
-              <NeonButton href={getContactLinks().tel} variant="outline" className="w-full">
-                {contactContent.ctaCall}
-              </NeonButton>
-              <NeonButton
-                href={siteConfig.googleReview}
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="secondary"
-                className="w-full"
-              >
-                Ostavi recenziju
-              </NeonButton>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal direction="right" delay={0.2} className="lg:col-span-3">
-            <div
-              id="kontakt-form"
-              className="glass-card relative overflow-hidden rounded-2xl p-6 md:p-8"
-            >
-              <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[#00E5FF]/10 blur-3xl" />
-
-              {submitted ? (
-                <div className="relative py-12 text-center">
-                  <Send className="mx-auto mb-4 h-10 w-10 text-[#00E5FF]" />
-                  <h3 className="font-heading text-xl font-bold text-white">
-                    Poruka poslata!
-                  </h3>
-                  <p className="mt-2 text-[#B8B8C8]">
-                    Javićemo ti se uskoro sa slobodnim terminima.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="relative space-y-5">
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="name" className="mb-2 block text-sm text-[#B8B8C8]">
-                        {contactContent.form.name}
-                      </label>
-                      <input
-                        id="name"
-                        name="name"
-                        required
-                        className="w-full rounded-xl border border-white/10 bg-[#050510]/60 px-4 py-3 text-white placeholder-[#B8B8C8]/50 outline-none transition-colors focus:border-[#00E5FF]/50"
-                        placeholder="Tvoje ime"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="mb-2 block text-sm text-[#B8B8C8]">
-                        {contactContent.form.phone}
-                      </label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        required
-                        className="w-full rounded-xl border border-white/10 bg-[#050510]/60 px-4 py-3 text-white placeholder-[#B8B8C8]/50 outline-none transition-colors focus:border-[#00E5FF]/50"
-                        placeholder="06X XXX XXXX"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="eventType" className="mb-2 block text-sm text-[#B8B8C8]">
-                        {contactContent.form.eventType}
-                      </label>
-                      <select
-                        id="eventType"
-                        name="eventType"
-                        required
-                        className="w-full rounded-xl border border-white/10 bg-[#050510]/60 px-4 py-3 text-white outline-none transition-colors focus:border-[#00E5FF]/50"
-                      >
-                        <option value="">Izaberi...</option>
-                        {contactContent.form.eventTypes.map((type) => (
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="date" className="mb-2 block text-sm text-[#B8B8C8]">
-                        {contactContent.form.date}
-                      </label>
-                      <input
-                        id="date"
-                        name="date"
-                        type="date"
-                        className="w-full rounded-xl border border-white/10 bg-[#050510]/60 px-4 py-3 text-white outline-none transition-colors focus:border-[#00E5FF]/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="mb-2 block text-sm text-[#B8B8C8]">
-                      {contactContent.form.message}
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      required
-                      className="w-full resize-none rounded-xl border border-white/10 bg-[#050510]/60 px-4 py-3 text-white placeholder-[#B8B8C8]/50 outline-none transition-colors focus:border-[#00E5FF]/50"
-                      placeholder="Koliko vas dolazi, koji termin vas zanima..."
-                    />
-                  </div>
-
-                  <NeonButton type="submit" className="w-full">
-                    {contactContent.form.submit}
-                  </NeonButton>
-                </form>
-              )}
-            </div>
-          </ScrollReveal>
-        </div>
+        <ScrollReveal delay={0.15} className="mx-auto mt-12 max-w-2xl space-y-4">
+          {cards.map((card) => (
+            <ContactCard key={card.label} {...card} />
+          ))}
+        </ScrollReveal>
       </div>
     </section>
   );
